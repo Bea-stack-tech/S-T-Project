@@ -6,5 +6,6 @@ Google Search Trends data from different sources.
 """
 
 from .pytrends_client import PyTrendsClient
+from .valueserp_client import ValueSerpClient
 
-__all__ = ["PyTrendsClient"] 
+__all__ = ["PyTrendsClient", "ValueSerpClient"] 

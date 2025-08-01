@@ -53,7 +53,13 @@ This project supports multiple Google Trends API options:
    - Higher rate limits
    - More reliable
 
-3. **Alternative APIs** (Various providers)
+3. **Value SERP API** (Traject Data)
+   - Comprehensive SERP data (Search, Maps, Shopping, News, Products, Reviews)
+   - Requires API key from https://valueserp.com/
+   - High-quality, reliable data
+   - Multiple endpoints for different data types
+
+4. **Alternative APIs** (Various providers)
    - Serpapi, RapidAPI, etc.
    - Different pricing models
 
@@ -85,6 +91,55 @@ comparison = analyzer.compare_geographic_trends(
     keyword="climate change",
     countries=["US", "UK", "CA", "AU"]
 )
+```
+
+### Value SERP API Integration
+```python
+from src.api_clients.valueserp_client import ValueSerpClient
+
+# Initialize the client
+client = ValueSerpClient(api_key="your_api_key")
+
+# Get comprehensive SERP insights
+insights = client.get_serp_insights(
+    query="artificial intelligence",
+    location="United States",
+    gl="us",
+    hl="en",
+    num=10
+)
+
+# Access different result types
+search_results = insights['search_results']
+news_results = insights['news_results']
+places_results = insights['places_results']
+shopping_results = insights['shopping_results']
+
+# Convert to DataFrame for analysis
+import pandas as pd
+df_search = pd.DataFrame(search_results)
+df_news = pd.DataFrame(news_results)
+```
+
+### Individual Value SERP Endpoints
+```python
+# Google Search results
+search_data = client.search("machine learning", num=10)
+
+# Google News results
+news_data = client.news("tech news", num=10)
+
+# Google Maps results
+places_data = client.places("restaurants", num=10)
+
+# Google Shopping results
+shopping_data = client.shopping("laptop", num=10)
+
+# Google Product results
+product_data = client.product("product_id_here")
+
+# Google Reviews
+reviews_data = client.place_reviews("place_id_here")
 ```
 
 ## 📁 Project Structure
