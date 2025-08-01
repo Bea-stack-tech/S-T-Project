@@ -1,0 +1,37 @@
+{
+  "report_types": {
+    "trend_analysis": true,
+    "comparison_report": true,
+    "geographic_analysis": true,
+    "insights_report": true,
+    "executive_summary": true
+  },
+  "keywords": [
+    "artificial intelligence",
+    "machine learning",
+    "python",
+    "data science",
+    "deep learning",
+    "blockchain"
+  ],
+  "locations": ["US", "GB", "CA", "AU", "DE", "FR"],
+  "timeframes": ["today 1-m", "today 3-m", "today 12-m"],
+  "output": {
+    "formats": ["html", "excel"],
+    "directory": "reports/",
+    "include_charts": true,
+    "include_insights": true,
+    "template": "default"
+  },
+  "visualization": {
+    "style": "seaborn",
+    "color_palette": "husl",
+    "figure_size": [12, 8],
+    "dpi": 300
+  },
+  "insights": {
+    "trend_threshold": 10,
+    "correlation_threshold": 0.7,
+    "include_recommendations": true
+  }
+} 

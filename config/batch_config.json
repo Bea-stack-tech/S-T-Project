@@ -1,0 +1,42 @@
+{
+  "keywords": [
+    "artificial intelligence",
+    "machine learning",
+    "python",
+    "data science",
+    "deep learning",
+    "neural networks",
+    "blockchain",
+    "cryptocurrency",
+    "bitcoin",
+    "ethereum",
+    "cloud computing",
+    "aws",
+    "azure",
+    "google cloud",
+    "cybersecurity",
+    "privacy",
+    "gdpr",
+    "data protection"
+  ],
+  "locations": ["US", "GB", "CA", "AU", "DE", "FR", "JP", "IN"],
+  "timeframes": ["today 1-m", "today 3-m", "today 12-m"],
+  "processing": {
+    "max_workers": 4,
+    "batch_size": 5,
+    "delay_between_batches": 2,
+    "retry_attempts": 3,
+    "retry_delay": 5
+  },
+  "output": {
+    "format": ["json", "csv", "excel"],
+    "directory": "data/batch_results/",
+    "include_metadata": true,
+    "compress_results": false
+  },
+  "validation": {
+    "min_data_points": 10,
+    "max_missing_values": 0.2,
+    "validate_trends": true
+  }
+} 

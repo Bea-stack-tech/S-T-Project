@@ -1,0 +1,42 @@
+{
+  "keywords": [
+    "artificial intelligence",
+    "machine learning",
+    "python programming",
+    "data science",
+    "blockchain",
+    "cryptocurrency",
+    "cloud computing",
+    "cybersecurity"
+  ],
+  "monitoring_interval": 3600,
+  "alert_threshold": 20,
+  "geographic_locations": ["US", "GB", "CA", "AU"],
+  "timeframe": "today 7-d",
+  "notifications": {
+    "email": {
+      "enabled": false,
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "sender_email": "",
+      "sender_password": "",
+      "recipient_emails": []
+    },
+    "slack": {
+      "enabled": false,
+      "webhook_url": "",
+      "channel": "#trends"
+    },
+    "webhook": {
+      "enabled": false,
+      "url": "",
+      "headers": {}
+    }
+  },
+  "data_storage": {
+    "save_to_file": true,
+    "file_path": "data/monitoring/",
+    "save_to_database": false,
+    "database_url": ""
+  }
+} 
