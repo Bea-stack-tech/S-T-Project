@@ -46,10 +46,10 @@ pip install -r requirements.txt
 
 ```bash
 # Copy environment template
-cp .env.example .env
+cp env.example .env.local
 
-# Edit .env with your API keys (optional for web interface)
-VALUE_SERP_API_KEY=your_api_key_here
+# Edit .env.local with your Value SERP API key
+VALUE_SERP_API_KEY=your_actual_api_key_here
 ```
 
 ### 3. Run the Application
@@ -63,17 +63,22 @@ The application will be available at `http://localhost:3000`
 
 ## 🎯 How to Use
 
-### Step 1: Enter Your API Key
-1. Open the web application in your browser
-2. Enter your Value SERP API key in the secure input field
-3. Click "Validate API Key" to verify it works
-4. Once validated, the "Run Automation" button will be enabled
+### Step 1: Configure API Key
+1. Copy the environment template: `cp env.example .env.local`
+2. Edit `.env.local` and add your Value SERP API key
+3. Restart the development server
 
-### Step 2: Run Automation
-1. Click the "Run Automation" button
+### Step 2: Enter Keywords or URLs
+1. Open the web application in your browser
+2. Enter keywords (one per line) or website URLs (one per line)
+3. Click "Validate Input" to verify your entries
+4. Once validated, the "Analyze Trends" button will be enabled
+
+### Step 3: Run Analysis
+1. Click the "Analyze Trends" button
 2. Watch the real-time progress as the system:
-   - Monitors trends for configured keywords
-   - Processes batch data across multiple locations
+   - Monitors trends for your keywords
+   - Analyzes search data for your URLs
    - Generates comprehensive reports
 3. View the results and download generated files
 
@@ -107,8 +112,8 @@ webapp/
 
 ## 🔧 Configuration
 
-### API Key Validation
-The application validates your Value SERP API key by making a test request to the API. For security, the key is not stored permanently.
+### API Key Setup
+The application uses the Value SERP API key from environment variables. The key is configured in `.env.local` and is not exposed to the frontend for security.
 
 ### Automation Settings
 The web interface uses the same configuration files as the command-line scripts:
