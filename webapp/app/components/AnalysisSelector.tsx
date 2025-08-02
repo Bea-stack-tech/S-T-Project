@@ -69,70 +69,70 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
       <Card className="border-0 shadow-none bg-transparent">
         <CardHeader className="text-center pb-8">
           <div className="relative inline-block mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-              <Sparkles className="h-10 w-10 text-white" />
+            <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
+              <Sparkles className="h-10 w-10 text-primary-foreground" />
             </div>
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
               <Zap className="h-3 w-3 text-white" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-3">
+          <CardTitle className="text-3xl font-bold mb-3">
             How do you want to start?
           </CardTitle>
-          <CardDescription className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <CardDescription className="text-lg max-w-2xl mx-auto">
             Choose your analysis approach and enter your data to unlock powerful insights
           </CardDescription>
         </CardHeader>
       </Card>
 
       {/* Analysis Type Selection */}
-      <Card className="border-0 shadow-none bg-transparent">
+      <Card>
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <Target className="h-5 w-5 text-slate-600" />
-            <CardTitle className="text-lg">Analysis Type</CardTitle>
+            <Target className="h-5 w-5 text-muted-foreground" />
+            <CardTitle>Analysis Type</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card 
               className={cn(
-                "cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1",
+                "cursor-pointer transition-all duration-300 hover:shadow-lg",
                 analysisType === 'keywords' 
-                  ? "border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg" 
-                  : "border-slate-200 bg-white hover:border-slate-300"
+                  ? "border-primary bg-primary/5" 
+                  : "border-border hover:border-border"
               )}
               onClick={() => setAnalysisType('keywords')}
             >
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                    "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300",
                     analysisType === 'keywords' 
-                      ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg" 
-                      : "bg-slate-100 text-slate-600"
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-muted text-muted-foreground"
                   )}>
                     <Search className="h-6 w-6" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="font-semibold text-slate-900">Seed Keywords</h3>
+                      <h3 className="font-semibold">Seed Keywords</h3>
                       {analysisType === 'keywords' && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                       )}
                     </div>
-                    <p className="text-slate-600 mb-3">Analyze trends for specific keywords</p>
+                    <p className="text-muted-foreground mb-3">Analyze trends for specific keywords</p>
                     <div className="space-y-1">
-                      <div className="flex items-center space-x-1 text-xs text-slate-500">
-                        <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
                         <span>Keyword trend analysis</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-slate-500">
-                        <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
                         <span>Search volume insights</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-slate-500">
-                        <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
                         <span>Competition analysis</span>
                       </div>
                     </div>
@@ -143,43 +143,43 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
 
             <Card 
               className={cn(
-                "cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1",
+                "cursor-pointer transition-all duration-300 hover:shadow-lg",
                 analysisType === 'urls' 
-                  ? "border-green-500 bg-gradient-to-br from-green-50 to-emerald-50 shadow-lg" 
-                  : "border-slate-200 bg-white hover:border-slate-300"
+                  ? "border-green-500 bg-green-50" 
+                  : "border-border hover:border-border"
               )}
               onClick={() => setAnalysisType('urls')}
             >
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                    "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300",
                     analysisType === 'urls' 
-                      ? "bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg" 
-                      : "bg-slate-100 text-slate-600"
+                      ? "bg-green-500 text-white" 
+                      : "bg-muted text-muted-foreground"
                   )}>
                     <Globe className="h-6 w-6" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="font-semibold text-slate-900">Competitor URLs</h3>
+                      <h3 className="font-semibold">Competitor URLs</h3>
                       <Badge variant="secondary" className="text-xs">Max 3</Badge>
                       {analysisType === 'urls' && (
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       )}
                     </div>
-                    <p className="text-slate-600 mb-3">Analyze competitor websites</p>
+                    <p className="text-muted-foreground mb-3">Analyze competitor websites</p>
                     <div className="space-y-1">
-                      <div className="flex items-center space-x-1 text-xs text-slate-500">
-                        <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
                         <span>Competitor keyword discovery</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-slate-500">
-                        <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
                         <span>Market positioning analysis</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-slate-500">
-                        <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
                         <span>Gap identification</span>
                       </div>
                     </div>
@@ -192,15 +192,15 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
       </Card>
 
       {/* Input Data */}
-      <Card className="border-0 shadow-none bg-transparent">
+      <Card>
         <CardHeader>
           <div className="flex items-center space-x-2">
             {analysisType === 'keywords' ? (
-              <Search className="h-5 w-5 text-blue-600" />
+              <Search className="h-5 w-5 text-primary" />
             ) : (
               <Globe className="h-5 w-5 text-green-600" />
             )}
-            <CardTitle className="text-lg">
+            <CardTitle>
               {analysisType === 'keywords' ? 'Keywords' : 'Competitor URLs'}
             </CardTitle>
           </div>
@@ -215,12 +215,12 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
               className="w-full resize-none"
               disabled={isRunning}
             />
-            <div className="absolute top-4 right-4 text-xs text-slate-400">
+            <div className="absolute top-4 right-4 text-xs text-muted-foreground">
               {inputData.split('\n').filter(item => item.trim()).length} items
             </div>
           </div>
-          <div className="text-sm text-slate-500 flex items-center space-x-2">
-            <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+          <div className="text-sm text-muted-foreground flex items-center space-x-2">
+            <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
             <span>
               {analysisType === 'keywords' 
                 ? 'Enter each keyword on a separate line'
@@ -232,11 +232,11 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
       </Card>
 
       {/* Location Input */}
-      <Card className="border-0 shadow-none bg-transparent">
+      <Card>
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <MapPin className="h-5 w-5 text-slate-600" />
-            <CardTitle className="text-lg">Location (Optional)</CardTitle>
+            <MapPin className="h-5 w-5 text-muted-foreground" />
+            <CardTitle>Location (Optional)</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -246,8 +246,8 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
             placeholder="B2B leaves blank, Local fills in"
             disabled={isRunning}
           />
-          <div className="text-sm text-slate-500 flex items-center space-x-2">
-            <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+          <div className="text-sm text-muted-foreground flex items-center space-x-2">
+            <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
             <span>Leave blank for B2B analysis, or enter location for local business analysis</span>
           </div>
         </CardContent>
@@ -255,20 +255,20 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
 
       {/* Error Messages */}
       {errors.length > 0 && (
-        <Card className="border-red-200 bg-red-50/80">
+        <Card className="border-destructive bg-destructive/5">
           <CardHeader>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                <AlertCircle className="h-4 w-4 text-red-600" />
+              <div className="w-8 h-8 bg-destructive/10 rounded-lg flex items-center justify-center">
+                <AlertCircle className="h-4 w-4 text-destructive" />
               </div>
-              <CardTitle className="text-red-800">Please fix the following errors:</CardTitle>
+              <CardTitle className="text-destructive">Please fix the following errors:</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
               {errors.map((error, index) => (
-                <li key={index} className="flex items-center space-x-2 text-red-700">
-                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                <li key={index} className="flex items-center space-x-2 text-destructive">
+                  <div className="w-1.5 h-1.5 bg-destructive rounded-full"></div>
                   <span>{error}</span>
                 </li>
               ))}
@@ -283,11 +283,11 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
           onClick={handleStartAnalysis}
           disabled={isRunning || !inputData.trim()}
           size="lg"
-          className="px-12 py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+          className="px-12 py-6 text-lg font-semibold"
         >
           {isRunning ? (
             <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground mr-3"></div>
               <span>Starting Analysis...</span>
             </>
           ) : (
@@ -300,98 +300,98 @@ export default function AnalysisSelector({ onStartAnalysis, isRunning }: Analysi
       </div>
 
       {/* Analysis Overview */}
-      <Card className="bg-gradient-to-br from-slate-50 to-blue-50/50 border-slate-200/60">
+      <Card className="bg-muted/50">
         <CardHeader>
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-white" />
+            <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-5 w-5" />
             </div>
-            <CardTitle className="text-xl">Three-Phase Analysis Engine</CardTitle>
+            <CardTitle>Three-Phase Analysis Engine</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-white/60 backdrop-blur-sm border-white/40">
+            <Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <span className="text-sm font-bold text-white">1</span>
+                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                    <span className="text-sm font-bold text-primary-foreground">1</span>
                   </div>
-                  <h4 className="font-semibold text-slate-900">Paid Advertising</h4>
+                  <h4 className="font-semibold">Paid Advertising</h4>
                 </div>
-                <div className="text-sm text-slate-600 mb-3">
+                <div className="text-sm text-muted-foreground mb-3">
                   {analysisType === 'keywords' 
                     ? 'Analyze ads showing for your seed keywords'
                     : 'Analyze ads showing for competitor websites'
                   }
                 </div>
                 <div className="space-y-1">
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-blue-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-primary rounded-full"></div>
                     <span>Ad strength assessment</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-blue-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-primary rounded-full"></div>
                     <span>Messaging analysis</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-blue-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-primary rounded-full"></div>
                     <span>Positioning gaps</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/60 backdrop-blur-sm border-white/40">
+            <Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                     <span className="text-sm font-bold text-white">2</span>
                   </div>
-                  <h4 className="font-semibold text-slate-900">Trend Discovery</h4>
+                  <h4 className="font-semibold">Trend Discovery</h4>
                 </div>
-                <div className="text-sm text-slate-600 mb-3">
+                <div className="text-sm text-muted-foreground mb-3">
                   Take keywords → Google Trends API → Find look-alike trending keywords
                 </div>
                 <div className="space-y-1">
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-green-500 rounded-full"></div>
                     <span>Expanded keyword universe</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-green-500 rounded-full"></div>
                     <span>Momentum data</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-green-500 rounded-full"></div>
                     <span>Geographic patterns</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/60 backdrop-blur-sm border-white/40">
+            <Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
                     <span className="text-sm font-bold text-white">3</span>
                   </div>
-                  <h4 className="font-semibold text-slate-900">Competitive Analysis</h4>
+                  <h4 className="font-semibold">Competitive Analysis</h4>
                 </div>
-                <div className="text-sm text-slate-600 mb-3">
+                <div className="text-sm text-muted-foreground mb-3">
                   Cross-reference look-alike keywords against competitor performance
                 </div>
                 <div className="space-y-1">
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-purple-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
                     <span>Opportunity matrix</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-purple-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
                     <span>Paid & organic insights</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-slate-500">
-                    <div className="w-1 h-1 bg-purple-400 rounded-full"></div>
+                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
                     <span>Gap identification</span>
                   </div>
                 </div>

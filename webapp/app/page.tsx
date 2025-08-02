@@ -1,7 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, TrendingUp, BarChart3, FileText, Settings, Download, AlertCircle, CheckCircle, Target, Search, Globe, Sparkles, Zap, Lightbulb } from 'lucide-react';
+import { Play, TrendingUp, BarChart3, FileText, Settings, Download, AlertCircle, CheckCircle, Target, Search, Globe, Sparkles, Zap, Lightbulb, MapPin, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import AnalysisSelector from './components/AnalysisSelector';
 import ResultsViewer from './components/ResultsViewer';
 
@@ -193,176 +199,182 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary-foreground" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                  Three-Phase Analysis Engine
-                </h1>
-                <p className="text-sm text-slate-500 flex items-center space-x-1">
-                  <Zap className="h-3 w-3" />
-                  <span>Powered by Value SERP API & Google Trends</span>
-                </p>
-              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
             </div>
-            <div className="flex items-center space-x-3">
-              <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
-                <Settings className="h-5 w-5" />
-              </button>
+            <div>
+              <h1 className="text-xl font-semibold">Three-Phase Analysis Engine</h1>
+              <p className="text-sm text-muted-foreground flex items-center space-x-1">
+                <Zap className="h-3 w-3" />
+                <span>Powered by Value SERP API & Google Trends</span>
+              </p>
             </div>
+          </div>
+          <div className="ml-auto flex items-center space-x-2">
+            <Button variant="ghost" size="icon">
+              <Settings className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {/* Analysis Setup */}
-                {currentStep === 'setup' && (
-                  <div className="mb-8">
-                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
-                      <div className="max-w-4xl mx-auto">
-                        <AnalysisSelector 
-                          onStartAnalysis={handleStartAnalysis}
-                          isRunning={isRunning}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+      <div className="container py-8 space-y-8">
+        {/* Analysis Setup */}
+        {currentStep === 'setup' && (
+          <div>
+            <AnalysisSelector 
+              onStartAnalysis={handleStartAnalysis}
+              isRunning={isRunning}
+            />
+          </div>
+        )}
 
         {/* Three-Phase Progress */}
         {isRunning && (
-          <div className="mb-8">
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="h-4 w-4 text-white" />
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <BarChart3 className="h-4 w-4 text-primary-foreground" />
                 </div>
-                <h2 className="text-xl font-semibold text-slate-900">Analysis Progress</h2>
+                <CardTitle>Analysis Progress</CardTitle>
               </div>
-              
+            </CardHeader>
+            <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
+                <Card className={cn(
+                  "transition-all duration-300",
                   currentPhase === 'phase1' 
-                    ? 'border-blue-500 bg-blue-50/50 shadow-lg' 
+                    ? "border-primary bg-primary/5" 
                     : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
-                    ? 'border-green-500 bg-green-50/50' 
-                    : 'border-slate-200 bg-slate-50/50'
-                }`}>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      currentPhase === 'phase1' 
-                        ? 'bg-blue-500 text-white animate-pulse' 
-                        : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-slate-200 text-slate-400'
-                    }`}>
-                      {currentPhase === 'phase1' ? <Play className="h-4 w-4" /> : 
-                       currentPhase && ['phase2', 'phase3'].includes(currentPhase) ? <CheckCircle className="h-4 w-4" /> : '1'}
+                    ? "border-green-500 bg-green-50" 
+                    : "border-border"
+                )}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className={cn(
+                        "w-10 h-10 rounded-full flex items-center justify-center",
+                        currentPhase === 'phase1' 
+                          ? "bg-primary text-primary-foreground animate-pulse" 
+                          : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
+                          ? "bg-green-500 text-white" 
+                          : "bg-muted text-muted-foreground"
+                      )}>
+                        {currentPhase === 'phase1' ? <Play className="h-4 w-4" /> : 
+                         currentPhase && ['phase2', 'phase3'].includes(currentPhase) ? <CheckCircle className="h-4 w-4" /> : '1'}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Phase 1</h3>
+                        <p className="text-sm text-muted-foreground">Paid Advertising</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900">Phase 1</h3>
-                      <p className="text-sm text-slate-500">Paid Advertising</p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-600">Analyzing ad strength and messaging</p>
-                </div>
+                    <p className="text-sm text-muted-foreground">Analyzing ad strength and messaging</p>
+                  </CardContent>
+                </Card>
                 
-                <div className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
+                <Card className={cn(
+                  "transition-all duration-300",
                   currentPhase === 'phase2' 
-                    ? 'border-green-500 bg-green-50/50 shadow-lg' 
+                    ? "border-green-500 bg-green-50" 
                     : currentPhase === 'phase3' 
-                    ? 'border-green-500 bg-green-50/50' 
-                    : 'border-slate-200 bg-slate-50/50'
-                }`}>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      currentPhase === 'phase2' 
-                        ? 'bg-green-500 text-white animate-pulse' 
-                        : currentPhase === 'phase3' 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-slate-200 text-slate-400'
-                    }`}>
-                      {currentPhase === 'phase2' ? <Play className="h-4 w-4" /> : 
-                       currentPhase === 'phase3' ? <CheckCircle className="h-4 w-4" /> : '2'}
+                    ? "border-green-500 bg-green-50" 
+                    : "border-border"
+                )}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className={cn(
+                        "w-10 h-10 rounded-full flex items-center justify-center",
+                        currentPhase === 'phase2' 
+                          ? "bg-green-500 text-white animate-pulse" 
+                          : currentPhase === 'phase3' 
+                          ? "bg-green-500 text-white" 
+                          : "bg-muted text-muted-foreground"
+                      )}>
+                        {currentPhase === 'phase2' ? <Play className="h-4 w-4" /> : 
+                         currentPhase === 'phase3' ? <CheckCircle className="h-4 w-4" /> : '2'}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Phase 2</h3>
+                        <p className="text-sm text-muted-foreground">Trend Discovery</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900">Phase 2</h3>
-                      <p className="text-sm text-slate-500">Trend Discovery</p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-600">Finding trending keywords</p>
-                </div>
+                    <p className="text-sm text-muted-foreground">Finding trending keywords</p>
+                  </CardContent>
+                </Card>
                 
-                <div className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
+                <Card className={cn(
+                  "transition-all duration-300",
                   currentPhase === 'phase3' 
-                    ? 'border-purple-500 bg-purple-50/50 shadow-lg' 
-                    : 'border-slate-200 bg-slate-50/50'
-                }`}>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      currentPhase === 'phase3' 
-                        ? 'bg-purple-500 text-white animate-pulse' 
-                        : 'bg-slate-200 text-slate-400'
-                    }`}>
-                      {currentPhase === 'phase3' ? <Play className="h-4 w-4" /> : '3'}
+                    ? "border-purple-500 bg-purple-50" 
+                    : "border-border"
+                )}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className={cn(
+                        "w-10 h-10 rounded-full flex items-center justify-center",
+                        currentPhase === 'phase3' 
+                          ? "bg-purple-500 text-white animate-pulse" 
+                          : "bg-muted text-muted-foreground"
+                      )}>
+                        {currentPhase === 'phase3' ? <Play className="h-4 w-4" /> : '3'}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Phase 3</h3>
+                        <p className="text-sm text-muted-foreground">Competitive Analysis</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900">Phase 3</h3>
-                      <p className="text-sm text-slate-500">Competitive Analysis</p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-600">Identifying opportunities</p>
-                </div>
+                    <p className="text-sm text-muted-foreground">Identifying opportunities</p>
+                  </CardContent>
+                </Card>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Results */}
         {currentStep === 'results' && results && (
-          <div className="mb-8">
+          <div>
             <ResultsViewer results={results} />
           </div>
         )}
 
         {/* Logs */}
         {logs.length > 0 && (
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200/60 bg-slate-50/50">
+          <Card>
+            <CardHeader>
               <div className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg flex items-center justify-center">
-                  <FileText className="h-3 w-3 text-white" />
+                <div className="w-6 h-6 bg-muted rounded-lg flex items-center justify-center">
+                  <FileText className="h-3 w-3" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900">Analysis Logs</h3>
+                <CardTitle>Analysis Logs</CardTitle>
               </div>
-            </div>
-            <div className="p-6">
-              <div className="bg-slate-900/95 rounded-xl p-4 h-64 overflow-y-auto font-mono text-sm">
+            </CardHeader>
+            <CardContent>
+              <div className="bg-muted rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
                 {logs.map((log, index) => (
-                  <div key={index} className="text-slate-300 mb-1 flex items-start space-x-2">
-                    <span className="text-slate-500 text-xs mt-0.5">→</span>
+                  <div key={index} className="text-muted-foreground mb-1 flex items-start space-x-2">
+                    <span className="text-muted-foreground/50 text-xs mt-0.5">→</span>
                     <span>{log}</span>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Action Buttons */}
         {!isRunning && currentStep !== 'setup' && (
-          <div className="flex justify-center space-x-4 mt-8">
-            <button
+          <div className="flex justify-center space-x-4">
+            <Button
+              variant="outline"
               onClick={() => {
                 setCurrentStep('setup');
                 setCurrentPhase(null);
@@ -370,17 +382,16 @@ export default function Home() {
                 setLogs([]);
                 setAnalysisConfig(null);
               }}
-              className="px-6 py-3 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               Run New Analysis
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => window.open('/api/download-results', '_blank')}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center space-x-2"
+              className="flex items-center space-x-2"
             >
               <Download className="h-4 w-4" />
               <span>Download Results</span>
-            </button>
+            </Button>
           </div>
         )}
       </div>
