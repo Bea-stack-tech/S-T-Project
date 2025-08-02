@@ -5,7 +5,8 @@ import {
   Play, TrendingUp, BarChart3, FileText, Settings, Download, AlertCircle, CheckCircle, 
   Target, Search, Globe, Sparkles, Zap, Lightbulb, MapPin, Users, Home as HomeIcon, Building, 
   Folder, CreditCard, DollarSign, Shield, MessageSquare, Calendar, HelpCircle, 
-  Terminal, Bell, Moon, ArrowLeft, ChevronRight, PaperPlane, Plus
+  Terminal, Bell, Moon, ArrowLeft, ChevronRight, PaperPlane, Plus, Activity, 
+  TrendingDown, Eye, MousePointer, Database, Cpu, BarChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -199,43 +200,37 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar Navigation */}
-      <div className="w-64 bg-muted/50 border-r border-border">
-        <div className="p-6">
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200">
+        <div className="flex h-16 items-center px-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <h1 className="text-lg font-semibold">Trends Engine</h1>
+            <h1 className="text-xl font-semibold text-gray-900">Trends Engine</h1>
           </div>
-          
-          {/* Main Navigation */}
-          <nav className="space-y-2">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveNav(item.id)}
-                  className={cn(
-                    "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    activeNav === item.id
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-          
-          {/* Bottom Navigation */}
-          <div className="mt-8 pt-6 border-t border-border">
+          <div className="ml-auto flex items-center space-x-4">
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-5 w-5 text-gray-500" />
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+            </Button>
+            <Button variant="ghost" size="icon">
+              <Moon className="h-5 w-5 text-gray-500" />
+            </Button>
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+              <Users className="h-4 w-4 text-gray-600" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
+          <div className="p-6">
             <nav className="space-y-2">
-              {bottomNavItems.map((item) => {
+              {navigationItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <button
@@ -244,8 +239,8 @@ export default function HomePage() {
                     className={cn(
                       "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                       activeNav === item.id
-                        ? "bg-muted text-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        ? "bg-blue-50 text-blue-700 border border-blue-200"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -254,309 +249,389 @@ export default function HomePage() {
                 );
               })}
             </nav>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center px-6">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm font-medium">Home</span>
-            </div>
-            <div className="ml-auto flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-4 w-4" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Moon className="h-4 w-4" />
-              </Button>
-              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                <Users className="h-4 w-4" />
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold">Dashboard</h1>
-          </div>
-
-          {/* Analysis Setup */}
-          {currentStep === 'setup' && (
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <BarChart3 className="h-5 w-5" />
-                    <span>Start New Analysis</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Choose your analysis type and input data to begin the three-phase analysis process.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer">
-                      <div className="text-center">
-                        <Target className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                        <h3 className="font-semibold">Keyword Analysis</h3>
-                        <p className="text-sm text-muted-foreground">Analyze seed keywords for trends and opportunities</p>
-                      </div>
-                    </Card>
-                    <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer">
-                      <div className="text-center">
-                        <Globe className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                        <h3 className="font-semibold">URL Analysis</h3>
-                        <p className="text-sm text-muted-foreground">Analyze competitor URLs for insights</p>
-                      </div>
-                    </Card>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">Keywords or URLs (one per line)</label>
-                      <Textarea 
-                        placeholder="Enter keywords or URLs here..."
-                        className="mt-1"
-                        rows={4}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Location (optional)</label>
-                      <Input 
-                        placeholder="e.g., United States, New York"
-                        className="mt-1"
-                      />
-                    </div>
-                    <Button 
-                      className="w-full"
-                      onClick={() => handleStartAnalysis('keywords', ['artificial intelligence', 'machine learning'], 'United States')}
-                      disabled={isRunning}
-                    >
-                      {isRunning ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Running Analysis...
-                        </>
-                      ) : (
-                        <>
-                          <Play className="h-4 w-4 mr-2" />
-                          Start Analysis
-                        </>
+            
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <nav className="space-y-2">
+                {bottomNavItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveNav(item.id)}
+                      className={cn(
+                        "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        activeNav === item.id
+                          ? "bg-blue-50 text-blue-700 border border-blue-200"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                       )}
-                    </Button>
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Page Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+              <p className="text-gray-600">Monitor your trends analysis and insights</p>
+            </div>
+
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Total Keywords</p>
+                      <p className="text-2xl font-bold text-gray-900">2,847</p>
+                    </div>
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Target className="h-6 w-6 text-blue-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm">
+                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                    <span className="text-green-600">+12.5%</span>
+                    <span className="text-gray-500 ml-1">from last month</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Active Analyses</p>
+                      <p className="text-2xl font-bold text-gray-900">24</p>
+                    </div>
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm">
+                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                    <span className="text-green-600">+8.2%</span>
+                    <span className="text-gray-500 ml-1">from last week</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Opportunities</p>
+                      <p className="text-2xl font-bold text-gray-900">156</p>
+                    </div>
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Lightbulb className="h-6 w-6 text-purple-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm">
+                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                    <span className="text-green-600">+23.1%</span>
+                    <span className="text-gray-500 ml-1">from last month</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white border-0 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Success Rate</p>
+                      <p className="text-2xl font-bold text-gray-900">94.2%</p>
+                    </div>
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <CheckCircle className="h-6 w-6 text-orange-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm">
+                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                    <span className="text-green-600">+2.1%</span>
+                    <span className="text-gray-500 ml-1">from last month</span>
                   </div>
                 </CardContent>
               </Card>
             </div>
-          )}
 
-          {/* Three-Phase Progress */}
-          {isRunning && (
-            <Card className="mb-6">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                    <BarChart3 className="h-4 w-4 text-primary-foreground" />
-                  </div>
-                  <CardTitle>Analysis Progress</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className={cn(
-                    "transition-all duration-300",
-                    currentPhase === 'phase1' 
-                      ? "border-primary bg-primary/5" 
-                      : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
-                      ? "border-green-500 bg-green-50" 
-                      : "border-border"
-                  )}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className={cn(
-                          "w-10 h-10 rounded-full flex items-center justify-center",
-                          currentPhase === 'phase1' 
-                            ? "bg-primary text-primary-foreground animate-pulse" 
-                            : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
-                            ? "bg-green-500 text-white" 
-                            : "bg-muted text-muted-foreground"
-                        )}>
-                          {currentPhase === 'phase1' ? <Play className="h-4 w-4" /> : 
-                           currentPhase && ['phase2', 'phase3'].includes(currentPhase) ? <CheckCircle className="h-4 w-4" /> : '1'}
+            {/* Analysis Setup */}
+            {currentStep === 'setup' && (
+              <div className="space-y-6">
+                <Card className="bg-white border-0 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center space-x-2 text-xl">
+                      <BarChart3 className="h-6 w-6 text-blue-600" />
+                      <span>Start New Analysis</span>
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      Choose your analysis type and input data to begin the three-phase analysis process.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card className="p-6 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50 hover:bg-blue-50">
+                        <div className="text-center">
+                          <Target className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">Keyword Analysis</h3>
+                          <p className="text-gray-600">Analyze seed keywords for trends and opportunities</p>
                         </div>
-                        <div>
-                          <h3 className="font-semibold">Phase 1</h3>
-                          <p className="text-sm text-muted-foreground">Paid Advertising</p>
+                      </Card>
+                      <Card className="p-6 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50 hover:bg-blue-50">
+                        <div className="text-center">
+                          <Globe className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">URL Analysis</h3>
+                          <p className="text-gray-600">Analyze competitor URLs for insights</p>
                         </div>
+                      </Card>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Keywords or URLs (one per line)</label>
+                        <Textarea 
+                          placeholder="Enter keywords or URLs here..."
+                          className="min-h-[120px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          rows={4}
+                        />
                       </div>
-                      <p className="text-sm text-muted-foreground">Analyzing ad strength and messaging</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className={cn(
-                    "transition-all duration-300",
-                    currentPhase === 'phase2' 
-                      ? "border-green-500 bg-green-50" 
-                      : currentPhase === 'phase3' 
-                      ? "border-green-500 bg-green-50" 
-                      : "border-border"
-                  )}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className={cn(
-                          "w-10 h-10 rounded-full flex items-center justify-center",
-                          currentPhase === 'phase2' 
-                            ? "bg-green-500 text-white animate-pulse" 
-                            : currentPhase === 'phase3' 
-                            ? "bg-green-500 text-white" 
-                            : "bg-muted text-muted-foreground"
-                        )}>
-                          {currentPhase === 'phase2' ? <Play className="h-4 w-4" /> : 
-                           currentPhase === 'phase3' ? <CheckCircle className="h-4 w-4" /> : '2'}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">Phase 2</h3>
-                          <p className="text-sm text-muted-foreground">Trend Discovery</p>
-                        </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Location (optional)</label>
+                        <Input 
+                          placeholder="e.g., United States, New York"
+                          className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        />
                       </div>
-                      <p className="text-sm text-muted-foreground">Finding trending keywords</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className={cn(
-                    "transition-all duration-300",
-                    currentPhase === 'phase3' 
-                      ? "border-purple-500 bg-purple-50" 
-                      : "border-border"
-                  )}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className={cn(
-                          "w-10 h-10 rounded-full flex items-center justify-center",
-                          currentPhase === 'phase3' 
-                            ? "bg-purple-500 text-white animate-pulse" 
-                            : "bg-muted text-muted-foreground"
-                        )}>
-                          {currentPhase === 'phase3' ? <Play className="h-4 w-4" /> : '3'}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">Phase 3</h3>
-                          <p className="text-sm text-muted-foreground">Competitive Analysis</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">Identifying opportunities</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                      <Button 
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+                        onClick={() => handleStartAnalysis('keywords', ['artificial intelligence', 'machine learning'], 'United States')}
+                        disabled={isRunning}
+                      >
+                        {isRunning ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            Running Analysis...
+                          </>
+                        ) : (
+                          <>
+                            <Play className="h-4 w-4 mr-2" />
+                            Start Analysis
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
-          {/* Results */}
-          {currentStep === 'results' && results && (
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                    <span>Analysis Complete</span>
+            {/* Three-Phase Progress */}
+            {isRunning && (
+              <Card className="bg-white border-0 shadow-sm mb-8">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                      <BarChart3 className="h-4 w-4 text-white" />
+                    </div>
+                    <span>Analysis Progress</span>
                   </CardTitle>
-                  <CardDescription>
-                    Your three-phase analysis has been completed successfully.
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-primary">{results.summary.totalKeywords}</div>
-                      <div className="text-sm text-muted-foreground">Keywords Analyzed</div>
-                    </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">{results.summary.successRate}%</div>
-                      <div className="text-sm text-muted-foreground">Success Rate</div>
-                    </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{results.summary.opportunitiesIdentified}</div>
-                      <div className="text-sm text-muted-foreground">Opportunities Found</div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="font-semibold">Top Trends</h3>
-                    <div className="space-y-2">
-                      {results.trends.map((trend: any, index: number) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                          <span className="font-medium">{trend.keyword}</span>
-                          <Badge variant={trend.trend === 'increasing' ? 'default' : 'secondary'}>
-                            {trend.trend} ({trend.value})
-                          </Badge>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className={cn(
+                      "transition-all duration-300 border-0 shadow-sm",
+                      currentPhase === 'phase1' 
+                        ? "bg-blue-50 border-blue-200" 
+                        : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
+                        ? "bg-green-50 border-green-200" 
+                        : "bg-gray-50"
+                    )}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center space-x-4 mb-4">
+                          <div className={cn(
+                            "w-12 h-12 rounded-full flex items-center justify-center",
+                            currentPhase === 'phase1' 
+                              ? "bg-blue-600 text-white animate-pulse" 
+                              : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
+                              ? "bg-green-600 text-white" 
+                              : "bg-gray-300 text-gray-600"
+                          )}>
+                            {currentPhase === 'phase1' ? <Play className="h-5 w-5" /> : 
+                             currentPhase && ['phase2', 'phase3'].includes(currentPhase) ? <CheckCircle className="h-5 w-5" /> : '1'}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">Phase 1</h3>
+                            <p className="text-sm text-gray-600">Paid Advertising</p>
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                        <p className="text-sm text-gray-600">Analyzing ad strength and messaging</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className={cn(
+                      "transition-all duration-300 border-0 shadow-sm",
+                      currentPhase === 'phase2' 
+                        ? "bg-green-50 border-green-200" 
+                        : currentPhase === 'phase3' 
+                        ? "bg-green-50 border-green-200" 
+                        : "bg-gray-50"
+                    )}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center space-x-4 mb-4">
+                          <div className={cn(
+                            "w-12 h-12 rounded-full flex items-center justify-center",
+                            currentPhase === 'phase2' 
+                              ? "bg-green-600 text-white animate-pulse" 
+                              : currentPhase === 'phase3' 
+                              ? "bg-green-600 text-white" 
+                              : "bg-gray-300 text-gray-600"
+                          )}>
+                            {currentPhase === 'phase2' ? <Play className="h-5 w-5" /> : 
+                             currentPhase === 'phase3' ? <CheckCircle className="h-5 w-5" /> : '2'}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">Phase 2</h3>
+                            <p className="text-sm text-gray-600">Trend Discovery</p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">Finding trending keywords</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className={cn(
+                      "transition-all duration-300 border-0 shadow-sm",
+                      currentPhase === 'phase3' 
+                        ? "bg-purple-50 border-purple-200" 
+                        : "bg-gray-50"
+                    )}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center space-x-4 mb-4">
+                          <div className={cn(
+                            "w-12 h-12 rounded-full flex items-center justify-center",
+                            currentPhase === 'phase3' 
+                              ? "bg-purple-600 text-white animate-pulse" 
+                              : "bg-gray-300 text-gray-600"
+                          )}>
+                            {currentPhase === 'phase3' ? <Play className="h-5 w-5" /> : '3'}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">Phase 3</h3>
+                            <p className="text-sm text-gray-600">Competitive Analysis</p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">Identifying opportunities</p>
+                      </CardContent>
+                    </Card>
                   </div>
                 </CardContent>
               </Card>
-            </div>
-          )}
+            )}
 
-          {/* Logs */}
-          {logs.length > 0 && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-muted rounded-lg flex items-center justify-center">
-                    <FileText className="h-3 w-3" />
-                  </div>
-                  <CardTitle>Analysis Logs</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-muted rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
-                  {logs.map((log, index) => (
-                    <div key={index} className="text-muted-foreground mb-1 flex items-start space-x-2">
-                      <span className="text-muted-foreground/50 text-xs mt-0.5">→</span>
-                      <span>{log}</span>
+            {/* Results */}
+            {currentStep === 'results' && results && (
+              <div className="space-y-6">
+                <Card className="bg-white border-0 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center space-x-2 text-xl">
+                      <CheckCircle className="h-6 w-6 text-green-600" />
+                      <span>Analysis Complete</span>
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      Your three-phase analysis has been completed successfully.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                      <div className="text-center p-6 bg-blue-50 rounded-lg">
+                        <div className="text-3xl font-bold text-blue-600 mb-2">{results.summary.totalKeywords}</div>
+                        <div className="text-sm text-gray-600">Keywords Analyzed</div>
+                      </div>
+                      <div className="text-center p-6 bg-green-50 rounded-lg">
+                        <div className="text-3xl font-bold text-green-600 mb-2">{results.summary.successRate}%</div>
+                        <div className="text-sm text-gray-600">Success Rate</div>
+                      </div>
+                      <div className="text-center p-6 bg-purple-50 rounded-lg">
+                        <div className="text-3xl font-bold text-purple-600 mb-2">{results.summary.opportunitiesIdentified}</div>
+                        <div className="text-sm text-gray-600">Opportunities Found</div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Top Trends</h3>
+                      <div className="space-y-3">
+                        {results.trends.map((trend: any, index: number) => (
+                          <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span className="font-medium text-gray-900">{trend.keyword}</span>
+                            <Badge variant={trend.trend === 'increasing' ? 'default' : 'secondary'} className="bg-blue-100 text-blue-800">
+                              {trend.trend} ({trend.value})
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
-          {/* Action Buttons */}
-          {!isRunning && currentStep !== 'setup' && (
-            <div className="flex justify-center space-x-4 mt-6">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCurrentStep('setup');
-                  setCurrentPhase(null);
-                  setResults(null);
-                  setLogs([]);
-                  setAnalysisConfig(null);
-                }}
-              >
-                Run New Analysis
-              </Button>
-              <Button
-                onClick={() => window.open('/api/download-results', '_blank')}
-                className="flex items-center space-x-2"
-              >
-                <Download className="h-4 w-4" />
-                <span>Download Results</span>
-              </Button>
-            </div>
-          )}
+            {/* Logs */}
+            {logs.length > 0 && (
+              <Card className="bg-white border-0 shadow-sm">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <FileText className="h-3 w-3 text-gray-600" />
+                    </div>
+                    <CardTitle>Analysis Logs</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-gray-50 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
+                    {logs.map((log, index) => (
+                      <div key={index} className="text-gray-600 mb-1 flex items-start space-x-2">
+                        <span className="text-gray-400 text-xs mt-0.5">→</span>
+                        <span>{log}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Action Buttons */}
+            {!isRunning && currentStep !== 'setup' && (
+              <div className="flex justify-center space-x-4 mt-8">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCurrentStep('setup');
+                    setCurrentPhase(null);
+                    setResults(null);
+                    setLogs([]);
+                    setAnalysisConfig(null);
+                  }}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Run New Analysis
+                </Button>
+                <Button
+                  onClick={() => window.open('/api/download-results', '_blank')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  <span>Download Results</span>
+                </Button>
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>
