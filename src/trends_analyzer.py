@@ -14,9 +14,16 @@ import numpy as np
 import random
 
 from pytrends.request import TrendReq
-from .api_clients.pytrends_client import PyTrendsClient
-from .data_processors.trends_processor import TrendsDataProcessor
-from .visualizations.trends_visualizer import TrendsVisualizer
+# Import our project modules
+try:
+    from .api_clients.pytrends_client import PyTrendsClient
+    from .data_processors.trends_processor import TrendsDataProcessor
+    from .visualizations.trends_visualizer import TrendsVisualizer
+except ImportError:
+    # Fallback imports for when running as standalone
+    from api_clients.pytrends_client import PyTrendsClient
+    from data_processors.trends_processor import TrendsDataProcessor
+    from visualizations.trends_visualizer import TrendsVisualizer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
