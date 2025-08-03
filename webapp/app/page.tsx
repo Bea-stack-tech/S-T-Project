@@ -1,19 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  Play, TrendingUp, BarChart3, FileText, Settings, Download, AlertCircle, CheckCircle, 
-  Target, Search, Globe, Sparkles, Zap, Lightbulb, MapPin, Users, Home as HomeIcon, Building, 
-  Folder, CreditCard, DollarSign, Shield, MessageSquare, Calendar, HelpCircle, 
-  Terminal, Bell, Moon, ArrowLeft, ChevronRight, PaperPlane, Plus, Activity, 
-  TrendingDown, Eye, MousePointer, Database, Cpu, BarChart
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 
 export default function HomePage() {
   const [isRunning, setIsRunning] = useState(false);
@@ -22,618 +9,1070 @@ export default function HomePage() {
   const [results, setResults] = useState<any>(null);
   const [logs, setLogs] = useState<string[]>([]);
   const [analysisConfig, setAnalysisConfig] = useState<any>(null);
-  const [activeNav, setActiveNav] = useState('dashboard');
+  const [keywords, setKeywords] = useState<string[]>(['artificial intelligence', 'machine learning']);
+  const [location, setLocation] = useState('United States');
+  const [error, setError] = useState('');
+  const [newKeyword, setNewKeyword] = useState('');
+
+  // Hardcoded ValueSerp API key
+  const VALUESERP_API_KEY = 'A9BCF29E15D1490FA90B3C59BD9A6AA8';
 
   const addLog = (message: string) => {
     setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
   };
 
-  const handleStartAnalysis = async (analysisType: 'keywords' | 'urls', data: string[], location?: string) => {
+  const handleStartAnalysis = async () => {
+    if (keywords.length === 0) {
+      setError('Please enter at least one keyword');
+      return;
+    }
+
+    setError('');
     setIsRunning(true);
     setCurrentStep('analysis');
     setCurrentPhase('phase1');
     
     // Store analysis configuration
     const config = {
-      type: analysisType,
-      data: data,
+      type: 'keywords',
+      data: keywords,
       location: location,
       timestamp: new Date().toISOString()
     };
     setAnalysisConfig(config);
 
     addLog('Starting Three-Phase Analysis Engine...');
-    addLog(`Analysis Type: ${analysisType === 'keywords' ? 'Seed Keywords' : 'Competitor URLs'}`);
-    addLog(`Data: ${data.join(', ')}`);
-    if (location) addLog(`Location: ${location}`);
+    addLog(`Analysis Type: Seed Keywords`);
+    addLog(`Data: ${keywords.join(', ')}`);
+    addLog(`Location: ${location}`);
 
     try {
       // Phase 1: Paid Advertising Strength Analysis
       addLog('Phase 1: Paid Advertising Strength Analysis');
       setCurrentPhase('phase1');
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate processing
       addLog('✓ Analyzing ads showing for input data...');
       addLog('✓ Assessing ad strength and messaging analysis...');
       addLog('✓ Identifying positioning gaps...');
-      addLog('✓ Phase 1 completed - Ad strength assessment generated');
 
       // Phase 2: Trends & Look-alike Discovery
       addLog('Phase 2: Trends & Look-alike Discovery');
       setCurrentPhase('phase2');
-      await new Promise(resolve => setTimeout(resolve, 4000)); // Simulate processing
       addLog('✓ Querying Google Trends API...');
       addLog('✓ Finding look-alike trending keywords...');
       addLog('✓ Extracting momentum data and seasonality...');
       addLog('✓ Analyzing geographic patterns...');
-      addLog('✓ Phase 2 completed - Expanded keyword universe generated');
 
       // Phase 3: Competitive Strengths & Weaknesses Analysis
       addLog('Phase 3: Competitive Strengths & Weaknesses Analysis');
       setCurrentPhase('phase3');
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate processing
       addLog('✓ Cross-referencing keywords against competitor performance...');
       addLog('✓ Analyzing both paid ads and organic SERP results...');
       addLog('✓ Identifying opportunity gaps...');
-      addLog('✓ Phase 3 completed - Opportunity matrix generated');
 
-      // Show Results
+      // Call the real API
+      addLog('✓ Calling ValueSerp API for comprehensive analysis...');
+      
+      const response = await fetch('/api/run-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          analysisType: 'keywords',
+          data: keywords,
+          location: location,
+          apiKey: VALUESERP_API_KEY
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'API request failed');
+      }
+
+      const comprehensiveResults = await response.json();
+      
+      setResults(comprehensiveResults);
       setCurrentStep('results');
       setCurrentPhase(null);
       
-      // Generate comprehensive results based on the three phases
-      const comprehensiveResults = {
-        analysis_config: config,
-        phase1_results: {
-          ad_strength_assessment: {
-            good_ads: Math.floor(Math.random() * 10) + 5,
-            bad_ads: Math.floor(Math.random() * 5) + 2,
-            messaging_insights: [
-              'Competitors focus on technical features',
-              'Opportunity for benefit-driven messaging',
-              'Price positioning gaps identified'
-            ],
-            positioning_gaps: [
-              'Customer service differentiation',
-              'Implementation support messaging',
-              'ROI-focused value propositions'
-            ]
-          }
-        },
-        phase2_results: {
-          expanded_keywords: analysisType === 'keywords' 
-            ? data.map(k => ({
-                original: k,
-                lookalikes: [
-                  `${k} tutorial`,
-                  `${k} examples`,
-                  `${k} best practices`,
-                  `${k} tools`
-                ],
-                trend_data: {
-                  momentum: Math.floor(Math.random() * 100),
-                  seasonality: ['stable', 'seasonal', 'growing'][Math.floor(Math.random() * 3)],
-                  geographic_hotspots: ['US', 'UK', 'Canada', 'Australia']
-                }
-              }))
-            : [],
-          trend_intelligence: {
-            total_keywords_discovered: data.length * 4,
-            high_momentum_keywords: Math.floor(data.length * 2),
-            seasonal_patterns: ['Q1 peak', 'Summer dip', 'Q4 surge'],
-            geographic_insights: ['US dominant', 'UK growing', 'APAC emerging']
-          }
-        },
-        phase3_results: {
-          opportunity_matrix: {
-            high_trend_low_competition: Math.floor(Math.random() * 10) + 5,
-            competitor_weaknesses: [
-              'Limited content marketing',
-              'Poor local SEO',
-              'Weak social proof',
-              'Missing video content'
-            ],
-            organic_opportunities: [
-              'Long-tail keyword gaps',
-              'Featured snippet opportunities',
-              'Local search optimization',
-              'Voice search optimization'
-            ],
-            paid_opportunities: [
-              'Underutilized ad formats',
-              'Audience targeting gaps',
-              'Bidding strategy optimization',
-              'Ad copy testing opportunities'
-            ]
-          }
-        },
-        trends: [
-          { keyword: 'artificial intelligence', trend: 'increasing', value: 85 },
-          { keyword: 'machine learning', trend: 'stable', value: 72 },
-          { keyword: 'python', trend: 'increasing', value: 68 },
-        ],
-        reports: [
-          { name: 'three_phase_analysis_report.html', type: 'HTML Report' },
-          { name: 'opportunity_matrix.xlsx', type: 'Excel Report' },
-          { name: 'trend_intelligence.json', type: 'JSON Data' },
-          { name: 'ad_strength_assessment.pdf', type: 'PDF Report' },
-        ],
-        summary: {
-          totalKeywords: data.length,
-          totalLocations: location ? 1 : 8,
-          successRate: 95.2,
-          processingTime: '10.5 seconds',
-          phasesCompleted: 3,
-          opportunitiesIdentified: Math.floor(Math.random() * 20) + 10
-        },
-        urls: []
-      };
-      
-      setResults(comprehensiveResults);
       addLog('✓ All three phases completed successfully!');
       addLog('✓ Comprehensive analysis report generated');
       addLog('✓ Opportunity matrix created with actionable insights');
     } catch (error) {
-      addLog(`✗ Error: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      addLog(`✗ Error: ${errorMessage}`);
+      setError(errorMessage);
     } finally {
       setIsRunning(false);
     }
   };
 
-  const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'organization', label: 'Organization', icon: Building },
-    { id: 'projects', label: 'Projects', icon: Folder },
-    { id: 'transactions', label: 'Transactions', icon: CreditCard },
-    { id: 'invoices', label: 'Invoices', icon: DollarSign },
-    { id: 'payments', label: 'Payments', icon: CreditCard },
-    { id: 'members', label: 'Members', icon: Users },
-    { id: 'permissions', label: 'Permissions', icon: Shield },
-    { id: 'chat', label: 'Chat', icon: MessageSquare },
-    { id: 'meetings', label: 'Meetings', icon: Calendar },
-  ];
+  const addKeyword = () => {
+    if (newKeyword.trim() && !keywords.includes(newKeyword.trim())) {
+      setKeywords(prev => [...prev, newKeyword.trim()]);
+      setNewKeyword('');
+    }
+  };
 
-  const bottomNavItems = [
-    { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'help', label: 'Help', icon: HelpCircle },
-    { id: 'console', label: 'Console', icon: Terminal },
-  ];
+  const removeKeyword = (index: number) => {
+    setKeywords(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      addKeyword();
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="flex h-16 items-center px-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
-            <h1 className="text-xl font-semibold text-gray-900">Trends Engine</h1>
+    <div style={{ minHeight: '100vh', backgroundColor: '#dbeafe', padding: '2rem' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)', padding: '3rem' }}>
+        
+        {/* Hero Section */}
+        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div style={{ 
+            width: '80px', 
+            height: '80px', 
+            background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)', 
+            borderRadius: '16px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            margin: '0 auto 2rem', 
+            boxShadow: '0 10px 25px rgba(139, 92, 246, 0.3)'
+          }}>
+            <span style={{ color: 'white', fontSize: '2rem', fontWeight: 'bold' }}>📊</span>
           </div>
-          <div className="ml-auto flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5 text-gray-500" />
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Moon className="h-5 w-5 text-gray-500" />
-            </Button>
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <Users className="h-4 w-4 text-gray-600" />
-            </div>
-          </div>
+          <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
+            <span style={{ color: '#2563eb' }}>Google</span>{' '}
+            <span style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Search Trends Analysis Platform</span>
+          </h1>
+          <p style={{ fontSize: '1.25rem', color: '#6b7280', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
+            Comprehensive three-phase analysis engine for search behavior insights, market opportunities, and competitive intelligence.
+          </p>
         </div>
-      </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
-          <div className="p-6">
-            <nav className="space-y-2">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveNav(item.id)}
-                    className={cn(
-                      "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      activeNav === item.id
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-            
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <nav className="space-y-2">
-                {bottomNavItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveNav(item.id)}
-                      className={cn(
-                        "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        activeNav === item.id
-                          ? "bg-blue-50 text-blue-700 border border-blue-200"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
+        {/* Configuration Section */}
+        {currentStep === 'setup' && (
+          <div style={{ marginBottom: '4rem' }}>
+            <div style={{ 
+              padding: '2rem', 
+              border: '2px dashed #cbd5e1', 
+              backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+              borderRadius: '16px', 
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                <span style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}>⚙️</span>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937' }}>Analysis Configuration</h2>
+              </div>
+              <p style={{ color: '#6b7280', marginBottom: '2rem', textAlign: 'center', fontSize: '1.125rem' }}>
+                Configure your analysis parameters and keywords.
+              </p>
+
+              <div style={{ maxWidth: '600px', margin: '0 auto', marginBottom: '2rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  Location
+                </label>
+                <select 
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '1rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '12px', 
+                    fontSize: '1rem',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="United States">United States</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Germany">Germany</option>
+                  <option value="France">France</option>
+                  <option value="Japan">Japan</option>
+                  <option value="India">India</option>
+                </select>
+              </div>
             </div>
           </div>
-        </aside>
+        )}
 
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Page Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-              <p className="text-gray-600">Monitor your trends analysis and insights</p>
-            </div>
-
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card className="bg-white border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Keywords</p>
-                      <p className="text-2xl font-bold text-gray-900">2,847</p>
-                    </div>
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Target className="h-6 w-6 text-blue-600" />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center text-sm">
-                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-green-600">+12.5%</span>
-                    <span className="text-gray-500 ml-1">from last month</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Active Analyses</p>
-                      <p className="text-2xl font-bold text-gray-900">24</p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Activity className="h-6 w-6 text-green-600" />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center text-sm">
-                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-green-600">+8.2%</span>
-                    <span className="text-gray-500 ml-1">from last week</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Opportunities</p>
-                      <p className="text-2xl font-bold text-gray-900">156</p>
-                    </div>
-                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <Lightbulb className="h-6 w-6 text-purple-600" />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center text-sm">
-                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-green-600">+23.1%</span>
-                    <span className="text-gray-500 ml-1">from last month</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Success Rate</p>
-                      <p className="text-2xl font-bold text-gray-900">94.2%</p>
-                    </div>
-                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <CheckCircle className="h-6 w-6 text-orange-600" />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center text-sm">
-                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                    <span className="text-green-600">+2.1%</span>
-                    <span className="text-gray-500 ml-1">from last month</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Analysis Setup */}
-            {currentStep === 'setup' && (
-              <div className="space-y-6">
-                <Card className="bg-white border-0 shadow-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center space-x-2 text-xl">
-                      <BarChart3 className="h-6 w-6 text-blue-600" />
-                      <span>Start New Analysis</span>
-                    </CardTitle>
-                    <CardDescription className="text-gray-600">
-                      Choose your analysis type and input data to begin the three-phase analysis process.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Card className="p-6 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50 hover:bg-blue-50">
-                        <div className="text-center">
-                          <Target className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">Keyword Analysis</h3>
-                          <p className="text-gray-600">Analyze seed keywords for trends and opportunities</p>
-                        </div>
-                      </Card>
-                      <Card className="p-6 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50 hover:bg-blue-50">
-                        <div className="text-center">
-                          <Globe className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">URL Analysis</h3>
-                          <p className="text-gray-600">Analyze competitor URLs for insights</p>
-                        </div>
-                      </Card>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 mb-2 block">Keywords or URLs (one per line)</label>
-                        <Textarea 
-                          placeholder="Enter keywords or URLs here..."
-                          className="min-h-[120px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          rows={4}
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 mb-2 block">Location (optional)</label>
-                        <Input 
-                          placeholder="e.g., United States, New York"
-                          className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        />
-                      </div>
-                      <Button 
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
-                        onClick={() => handleStartAnalysis('keywords', ['artificial intelligence', 'machine learning'], 'United States')}
-                        disabled={isRunning}
-                      >
-                        {isRunning ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Running Analysis...
-                          </>
-                        ) : (
-                          <>
-                            <Play className="h-4 w-4 mr-2" />
-                            Start Analysis
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+        {/* Keyword Analysis Setup Section */}
+        {currentStep === 'setup' && (
+          <div style={{ marginBottom: '4rem' }}>
+            <div style={{ 
+              padding: '2rem', 
+              border: '2px dashed #cbd5e1', 
+              backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+              borderRadius: '16px', 
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                <span style={{ marginRight: '0.75rem', fontSize: '1.5rem' }}>🔍</span>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937' }}>Keyword Analysis Setup</h2>
               </div>
-            )}
-
-            {/* Three-Phase Progress */}
-            {isRunning && (
-              <Card className="bg-white border-0 shadow-sm mb-8">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center space-x-2 text-xl">
-                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                      <BarChart3 className="h-4 w-4 text-white" />
-                    </div>
-                    <span>Analysis Progress</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className={cn(
-                      "transition-all duration-300 border-0 shadow-sm",
-                      currentPhase === 'phase1' 
-                        ? "bg-blue-50 border-blue-200" 
-                        : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
-                        ? "bg-green-50 border-green-200" 
-                        : "bg-gray-50"
-                    )}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <div className={cn(
-                            "w-12 h-12 rounded-full flex items-center justify-center",
-                            currentPhase === 'phase1' 
-                              ? "bg-blue-600 text-white animate-pulse" 
-                              : currentPhase && ['phase2', 'phase3'].includes(currentPhase) 
-                              ? "bg-green-600 text-white" 
-                              : "bg-gray-300 text-gray-600"
-                          )}>
-                            {currentPhase === 'phase1' ? <Play className="h-5 w-5" /> : 
-                             currentPhase && ['phase2', 'phase3'].includes(currentPhase) ? <CheckCircle className="h-5 w-5" /> : '1'}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">Phase 1</h3>
-                            <p className="text-sm text-gray-600">Paid Advertising</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-600">Analyzing ad strength and messaging</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className={cn(
-                      "transition-all duration-300 border-0 shadow-sm",
-                      currentPhase === 'phase2' 
-                        ? "bg-green-50 border-green-200" 
-                        : currentPhase === 'phase3' 
-                        ? "bg-green-50 border-green-200" 
-                        : "bg-gray-50"
-                    )}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <div className={cn(
-                            "w-12 h-12 rounded-full flex items-center justify-center",
-                            currentPhase === 'phase2' 
-                              ? "bg-green-600 text-white animate-pulse" 
-                              : currentPhase === 'phase3' 
-                              ? "bg-green-600 text-white" 
-                              : "bg-gray-300 text-gray-600"
-                          )}>
-                            {currentPhase === 'phase2' ? <Play className="h-5 w-5" /> : 
-                             currentPhase === 'phase3' ? <CheckCircle className="h-5 w-5" /> : '2'}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">Phase 2</h3>
-                            <p className="text-sm text-gray-600">Trend Discovery</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-600">Finding trending keywords</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className={cn(
-                      "transition-all duration-300 border-0 shadow-sm",
-                      currentPhase === 'phase3' 
-                        ? "bg-purple-50 border-purple-200" 
-                        : "bg-gray-50"
-                    )}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <div className={cn(
-                            "w-12 h-12 rounded-full flex items-center justify-center",
-                            currentPhase === 'phase3' 
-                              ? "bg-purple-600 text-white animate-pulse" 
-                              : "bg-gray-300 text-gray-600"
-                          )}>
-                            {currentPhase === 'phase3' ? <Play className="h-5 w-5" /> : '3'}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">Phase 3</h3>
-                            <p className="text-sm text-gray-600">Competitive Analysis</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-600">Identifying opportunities</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Results */}
-            {currentStep === 'results' && results && (
-              <div className="space-y-6">
-                <Card className="bg-white border-0 shadow-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center space-x-2 text-xl">
-                      <CheckCircle className="h-6 w-6 text-green-600" />
-                      <span>Analysis Complete</span>
-                    </CardTitle>
-                    <CardDescription className="text-gray-600">
-                      Your three-phase analysis has been completed successfully.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                      <div className="text-center p-6 bg-blue-50 rounded-lg">
-                        <div className="text-3xl font-bold text-blue-600 mb-2">{results.summary.totalKeywords}</div>
-                        <div className="text-sm text-gray-600">Keywords Analyzed</div>
-                      </div>
-                      <div className="text-center p-6 bg-green-50 rounded-lg">
-                        <div className="text-3xl font-bold text-green-600 mb-2">{results.summary.successRate}%</div>
-                        <div className="text-sm text-gray-600">Success Rate</div>
-                      </div>
-                      <div className="text-center p-6 bg-purple-50 rounded-lg">
-                        <div className="text-3xl font-bold text-purple-600 mb-2">{results.summary.opportunitiesIdentified}</div>
-                        <div className="text-sm text-gray-600">Opportunities Found</div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-gray-900">Top Trends</h3>
-                      <div className="space-y-3">
-                        {results.trends.map((trend: any, index: number) => (
-                          <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <span className="font-medium text-gray-900">{trend.keyword}</span>
-                            <Badge variant={trend.trend === 'increasing' ? 'default' : 'secondary'} className="bg-blue-100 text-blue-800">
-                              {trend.trend} ({trend.value})
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+              <p style={{ color: '#6b7280', marginBottom: '2rem', textAlign: 'center', fontSize: '1.125rem' }}>
+                Enter keywords to analyze through our three-phase analysis engine.
+              </p>
+              
+              <div style={{ maxWidth: '600px', margin: '0 auto', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <input 
+                    type="text"
+                    placeholder="Enter a keyword (e.g., 'digital marketing')"
+                    value={newKeyword}
+                    onChange={(e) => setNewKeyword(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    style={{ 
+                      flex: 1, 
+                      padding: '1rem', 
+                      border: '1px solid #d1d5db', 
+                      borderRadius: '12px', 
+                      fontSize: '1rem',
+                      outline: 'none'
+                    }}
+                  />
+                  <button 
+                    onClick={addKeyword}
+                    disabled={!newKeyword.trim()}
+                    style={{ 
+                      width: '48px', 
+                      height: '48px', 
+                      background: newKeyword.trim() ? 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)' : '#d1d5db', 
+                      border: 'none', 
+                      borderRadius: '12px', 
+                      color: 'white', 
+                      fontSize: '1.25rem',
+                      cursor: newKeyword.trim() ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-            )}
 
-            {/* Logs */}
-            {logs.length > 0 && (
-              <Card className="bg-white border-0 shadow-sm">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-gray-200 rounded-lg flex items-center justify-center">
-                      <FileText className="h-3 w-3 text-gray-600" />
-                    </div>
-                    <CardTitle>Analysis Logs</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-gray-50 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
-                    {logs.map((log, index) => (
-                      <div key={index} className="text-gray-600 mb-1 flex items-start space-x-2">
-                        <span className="text-gray-400 text-xs mt-0.5">→</span>
-                        <span>{log}</span>
+              {/* Display current keywords */}
+              {keywords.length > 0 && (
+                <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem' }}>Keywords to analyze:</h3>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {keywords.map((keyword, index) => (
+                      <div key={index} style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem',
+                        backgroundColor: '#f3f4f6',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '9999px',
+                        fontSize: '0.875rem',
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <span>{keyword}</span>
+                        <button 
+                          onClick={() => removeKeyword(index)}
+                          style={{ 
+                            background: 'none',
+                            border: 'none',
+                            color: '#ef4444',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            padding: '0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '16px',
+                            height: '16px'
+                          }}
+                        >
+                          ×
+                        </button>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Action Buttons */}
-            {!isRunning && currentStep !== 'setup' && (
-              <div className="flex justify-center space-x-4 mt-8">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setCurrentStep('setup');
-                    setCurrentPhase(null);
-                    setResults(null);
-                    setLogs([]);
-                    setAnalysisConfig(null);
-                  }}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  Run New Analysis
-                </Button>
-                <Button
-                  onClick={() => window.open('/api/download-results', '_blank')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  <span>Download Results</span>
-                </Button>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
-        </main>
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <div style={{ 
+            backgroundColor: '#fef2f2', 
+            border: '1px solid #fecaca', 
+            color: '#dc2626', 
+            padding: '1rem', 
+            borderRadius: '12px', 
+            marginBottom: '2rem',
+            textAlign: 'center'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Three Phase Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+          {/* Phase 1 Card */}
+          <div style={{ 
+            backgroundColor: '#eff6ff', 
+            padding: '2rem', 
+            borderRadius: '16px', 
+            border: '1px solid #bfdbfe',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer'
+          }} onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+          }} onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                width: '64px', 
+                height: '64px', 
+                backgroundColor: '#3b82f6', 
+                borderRadius: '16px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                margin: '0 auto 1rem',
+                boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)'
+              }}>
+                <span style={{ color: 'white', fontSize: '1.5rem' }}>🎯</span>
+              </div>
+              <div style={{ 
+                backgroundColor: '#f1f5f9', 
+                color: '#64748b', 
+                padding: '0.25rem 0.75rem', 
+                borderRadius: '9999px', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                display: 'inline-block',
+                marginBottom: '1rem'
+              }}>
+                Phase 1
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e40af', marginBottom: '0.75rem' }}>Paid Advertising Strength</h3>
+              <p style={{ color: '#2563eb', fontSize: '1rem', lineHeight: '1.5' }}>
+                Analyzing ads showing for keywords and identifying positioning gaps
+              </p>
+            </div>
+          </div>
+          
+          {/* Phase 2 Card */}
+          <div style={{ 
+            backgroundColor: '#f0fdf4', 
+            padding: '2rem', 
+            borderRadius: '16px', 
+            border: '1px solid #bbf7d0',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer'
+          }} onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+          }} onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                width: '64px', 
+                height: '64px', 
+                backgroundColor: '#10b981', 
+                borderRadius: '16px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                margin: '0 auto 1rem',
+                boxShadow: '0 4px 6px rgba(16, 185, 129, 0.3)'
+              }}>
+                <span style={{ color: 'white', fontSize: '1.5rem' }}>📈</span>
+              </div>
+              <div style={{ 
+                backgroundColor: '#f1f5f9', 
+                color: '#64748b', 
+                padding: '0.25rem 0.75rem', 
+                borderRadius: '9999px', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                display: 'inline-block',
+                marginBottom: '1rem'
+              }}>
+                Phase 2
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#166534', marginBottom: '0.75rem' }}>Trends & Look-alike Discovery</h3>
+              <p style={{ color: '#16a34a', fontSize: '1rem', lineHeight: '1.5' }}>
+                Using Google Trends API to find trending keywords and analyze momentum
+              </p>
+            </div>
+          </div>
+          
+          {/* Phase 3 Card */}
+          <div style={{ 
+            backgroundColor: '#faf5ff', 
+            padding: '2rem', 
+            borderRadius: '16px', 
+            border: '1px solid #ddd6fe',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer'
+          }} onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+          }} onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                width: '64px', 
+                height: '64px', 
+                backgroundColor: '#8b5cf6', 
+                borderRadius: '16px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                margin: '0 auto 1rem',
+                boxShadow: '0 4px 6px rgba(139, 92, 246, 0.3)'
+              }}>
+                <span style={{ color: 'white', fontSize: '1.5rem' }}>👥</span>
+              </div>
+              <div style={{ 
+                backgroundColor: '#f1f5f9', 
+                color: '#64748b', 
+                padding: '0.25rem 0.75rem', 
+                borderRadius: '9999px', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                display: 'inline-block',
+                marginBottom: '1rem'
+              }}>
+                Phase 3
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#7c3aed', marginBottom: '0.75rem' }}>Competitive Analysis</h3>
+              <p style={{ color: '#9333ea', fontSize: '1rem', lineHeight: '1.5' }}>
+                Cross-referencing keywords against competitor performance
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Analysis Progress Section */}
+        {isRunning && (
+          <div style={{ marginBottom: '4rem' }}>
+            <div style={{ 
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '16px', 
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+              border: '1px solid #e5e7eb'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <h2 style={{ 
+                  fontSize: '2rem', 
+                  fontWeight: 'bold', 
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)', 
+                  WebkitBackgroundClip: 'text', 
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '1rem'
+                }}>
+                  Analysis in Progress
+                </h2>
+                <p style={{ color: '#6b7280', fontSize: '1.125rem' }}>
+                  Running three-phase analysis engine...
+                </p>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
+                <div style={{ 
+                  backgroundColor: currentPhase === 'phase1' ? 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)' : '#f9fafb',
+                  color: currentPhase === 'phase1' ? 'white' : '#6b7280',
+                  padding: '1.5rem', 
+                  borderRadius: '12px', 
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <div style={{ 
+                    width: '64px', 
+                    height: '64px', 
+                    backgroundColor: currentPhase === 'phase1' ? 'rgba(255, 255, 255, 0.2)' : '#d1d5db', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    margin: '0 auto 1rem',
+                    animation: currentPhase === 'phase1' ? 'pulse 2s infinite' : 'none'
+                  }}>
+                    {currentPhase === 'phase1' ? '▶️' : '1'}
+                  </div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '1.125rem', marginBottom: '0.5rem' }}>Phase 1</h3>
+                  <p style={{ fontSize: '0.875rem', opacity: 0.8 }}>Paid Advertising Analysis</p>
+                </div>
+                
+                <div style={{ 
+                  backgroundColor: currentPhase === 'phase2' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : '#f9fafb',
+                  color: currentPhase === 'phase2' ? 'white' : '#6b7280',
+                  padding: '1.5rem', 
+                  borderRadius: '12px', 
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <div style={{ 
+                    width: '64px', 
+                    height: '64px', 
+                    backgroundColor: currentPhase === 'phase2' ? 'rgba(255, 255, 255, 0.2)' : '#d1d5db', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    margin: '0 auto 1rem',
+                    animation: currentPhase === 'phase2' ? 'pulse 2s infinite' : 'none'
+                  }}>
+                    {currentPhase === 'phase2' ? '▶️' : '2'}
+                  </div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '1.125rem', marginBottom: '0.5rem' }}>Phase 2</h3>
+                  <p style={{ fontSize: '0.875rem', opacity: 0.8 }}>Trend Discovery</p>
+                </div>
+                
+                <div style={{ 
+                  backgroundColor: currentPhase === 'phase3' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : '#f9fafb',
+                  color: currentPhase === 'phase3' ? 'white' : '#6b7280',
+                  padding: '1.5rem', 
+                  borderRadius: '12px', 
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <div style={{ 
+                    width: '64px', 
+                    height: '64px', 
+                    backgroundColor: currentPhase === 'phase3' ? 'rgba(255, 255, 255, 0.2)' : '#d1d5db', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    margin: '0 auto 1rem',
+                    animation: currentPhase === 'phase3' ? 'pulse 2s infinite' : 'none'
+                  }}>
+                    {currentPhase === 'phase3' ? '▶️' : '3'}
+                  </div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '1.125rem', marginBottom: '0.5rem' }}>Phase 3</h3>
+                  <p style={{ fontSize: '0.875rem', opacity: 0.8 }}>Competitive Analysis</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Results Section */}
+        {currentStep === 'results' && results && (
+          <div style={{ marginBottom: '4rem' }}>
+            <div style={{ 
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '16px', 
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+              border: '1px solid #e5e7eb'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <div style={{ 
+                  width: '80px', 
+                  height: '80px', 
+                  backgroundColor: '#10b981', 
+                  borderRadius: '16px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  margin: '0 auto 1.5rem',
+                  boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)'
+                }}>
+                  <span style={{ color: 'white', fontSize: '2rem' }}>✅</span>
+                </div>
+                <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981', marginBottom: '1rem' }}>
+                  Analysis Complete
+                </h2>
+                <p style={{ color: '#6b7280', fontSize: '1.125rem' }}>
+                  Your three-phase analysis has been completed successfully.
+                </p>
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+                <div style={{ 
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)', 
+                  color: 'white', 
+                  padding: '2rem', 
+                  borderRadius: '16px', 
+                  textAlign: 'center',
+                  boxShadow: '0 10px 25px rgba(139, 92, 246, 0.3)'
+                }}>
+                  <div style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>{results.summary.totalKeywords}</div>
+                  <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Keywords Analyzed</div>
+                </div>
+                
+                <div style={{ 
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                  color: 'white', 
+                  padding: '2rem', 
+                  borderRadius: '16px', 
+                  textAlign: 'center',
+                  boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)'
+                }}>
+                  <div style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>{results.summary.successRate}%</div>
+                  <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Success Rate</div>
+                </div>
+                
+                <div style={{ 
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
+                  color: 'white', 
+                  padding: '2rem', 
+                  borderRadius: '16px', 
+                  textAlign: 'center',
+                  boxShadow: '0 10px 25px rgba(245, 158, 11, 0.3)'
+                }}>
+                  <div style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>{results.summary.opportunitiesIdentified}</div>
+                  <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Opportunities Found</div>
+                </div>
+              </div>
+
+              {/* Keyword Statistics */}
+              {results.keyword_stats && results.keyword_stats.length > 0 && (
+                <div style={{ marginBottom: '3rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Keyword Statistics</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                    {results.keyword_stats.map((stat: any, index: number) => (
+                      <div key={index} style={{ 
+                        backgroundColor: '#f9fafb', 
+                        padding: '1.5rem', 
+                        borderRadius: '12px', 
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <h4 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>{stat.keyword}</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
+                          <div>
+                            <span style={{ color: '#6b7280' }}>Search Volume:</span>
+                            <span style={{ fontWeight: '600', color: '#1f2937', marginLeft: '0.5rem' }}>{stat.search_volume.toLocaleString()}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: '#6b7280' }}>CPC Estimate:</span>
+                            <span style={{ fontWeight: '600', color: '#1f2937', marginLeft: '0.5rem' }}>${stat.cpc_estimate}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: '#6b7280' }}>Competition:</span>
+                            <span style={{ 
+                              fontWeight: '600', 
+                              color: stat.competition_level === 'low' ? '#10b981' : stat.competition_level === 'medium' ? '#f59e0b' : '#ef4444',
+                              marginLeft: '0.5rem',
+                              textTransform: 'capitalize'
+                            }}>{stat.competition_level}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: '#6b7280' }}>Opportunity:</span>
+                            <span style={{ 
+                              fontWeight: '600', 
+                              color: stat.opportunity_score === 'high' ? '#10b981' : stat.opportunity_score === 'medium' ? '#f59e0b' : '#ef4444',
+                              marginLeft: '0.5rem',
+                              textTransform: 'capitalize'
+                            }}>{stat.opportunity_score}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Top Ads Analysis */}
+              {results.phase1_results.top_ads && results.phase1_results.top_ads.length > 0 && (
+                <div style={{ marginBottom: '3rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Top Ads & Search Results</h3>
+                  <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    {results.phase1_results.top_ads.slice(0, 10).map((ad: any, index: number) => (
+                      <div key={index} style={{ 
+                        backgroundColor: '#f9fafb', 
+                        padding: '1.5rem', 
+                        borderRadius: '12px', 
+                        marginBottom: '1rem',
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                          <div style={{ 
+                            backgroundColor: ad.is_paid ? '#fef3c7' : '#dbeafe', 
+                            color: ad.is_paid ? '#92400e' : '#1e40af', 
+                            padding: '0.25rem 0.75rem', 
+                            borderRadius: '9999px', 
+                            fontSize: '0.75rem',
+                            fontWeight: '500'
+                          }}>
+                            {ad.is_paid ? 'Paid Ad' : `Position ${ad.position}`}
+                          </div>
+                          <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>{ad.domain}</span>
+                        </div>
+                        <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#1f2937', marginBottom: '0.5rem' }}>{ad.title}</h4>
+                        <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{ad.snippet}</p>
+                        <a href={ad.url} target="_blank" rel="noopener noreferrer" style={{ 
+                          color: '#3b82f6', 
+                          fontSize: '0.875rem', 
+                          textDecoration: 'none'
+                        }}>
+                          {ad.url}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Companies Analysis */}
+              {results.phase1_results.companies_showing && results.phase1_results.companies_showing.length > 0 && (
+                <div style={{ marginBottom: '3rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Top Companies Showing</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                    {results.phase1_results.companies_showing.slice(0, 8).map((company: any, index: number) => (
+                      <div key={index} style={{ 
+                        backgroundColor: '#f9fafb', 
+                        padding: '1.5rem', 
+                        borderRadius: '12px', 
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.75rem' }}>{company.domain}</h4>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Frequency:</span> {company.frequency} appearances
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Avg Position:</span> {company.avg_position.toFixed(1)}
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                          <span style={{ fontWeight: '600' }}>Keywords:</span> {company.keywords.slice(0, 3).join(', ')}
+                          {company.keywords.length > 3 && '...'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Lookalike Keywords */}
+              {results.phase2_results.lookalike_keywords && results.phase2_results.lookalike_keywords.length > 0 && (
+                <div style={{ marginBottom: '3rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Lookalike Keywords Discovered</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                    {results.phase2_results.lookalike_keywords.slice(0, 12).map((lookalike: any, index: number) => (
+                      <div key={index} style={{ 
+                        backgroundColor: '#f9fafb', 
+                        padding: '1.5rem', 
+                        borderRadius: '12px', 
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.75rem' }}>{lookalike.keyword}</h4>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Search Volume:</span> {lookalike.search_volume.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Competition:</span>
+                          <span style={{ 
+                            color: lookalike.competition === 'low' ? '#10b981' : lookalike.competition === 'medium' ? '#f59e0b' : '#ef4444',
+                            marginLeft: '0.5rem',
+                            textTransform: 'capitalize'
+                          }}>{lookalike.competition}</span>
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Opportunity:</span>
+                          <span style={{ 
+                            color: lookalike.opportunity_score === 'high' ? '#10b981' : lookalike.opportunity_score === 'medium' ? '#f59e0b' : '#ef4444',
+                            marginLeft: '0.5rem',
+                            textTransform: 'capitalize'
+                          }}>{lookalike.opportunity_score}</span>
+                        </div>
+                        {lookalike.related_terms && lookalike.related_terms.length > 0 && (
+                          <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                            <span style={{ fontWeight: '600' }}>Related:</span>
+                            <div style={{ marginTop: '0.25rem' }}>
+                              {lookalike.related_terms.slice(0, 3).map((term: string, termIndex: number) => (
+                                <span key={termIndex} style={{ 
+                                  backgroundColor: '#e5e7eb', 
+                                  padding: '0.25rem 0.5rem', 
+                                  borderRadius: '4px', 
+                                  marginRight: '0.5rem',
+                                  fontSize: '0.75rem'
+                                }}>{term}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Competitive Analysis */}
+              {results.phase3_results.competitive_analysis.top_competitors && results.phase3_results.competitive_analysis.top_competitors.length > 0 && (
+                <div style={{ marginBottom: '3rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Top Competitors</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                    {results.phase3_results.competitive_analysis.top_competitors.slice(0, 8).map((competitor: any, index: number) => (
+                      <div key={index} style={{ 
+                        backgroundColor: '#f9fafb', 
+                        padding: '1.5rem', 
+                        borderRadius: '12px', 
+                        border: '1px solid #e5e7eb'
+                      }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.75rem' }}>{competitor.domain}</h4>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Market Share:</span> {competitor.market_share}%
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Avg Position:</span> {competitor.avg_position.toFixed(1)}
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: '600' }}>Strength:</span>
+                          <span style={{ 
+                            color: competitor.strength_score === 'high' ? '#ef4444' : competitor.strength_score === 'medium' ? '#f59e0b' : '#10b981',
+                            marginLeft: '0.5rem',
+                            textTransform: 'capitalize'
+                          }}>{competitor.strength_score}</span>
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                          <span style={{ fontWeight: '600' }}>Keywords:</span> {competitor.keywords.slice(0, 3).join(', ')}
+                          {competitor.keywords.length > 3 && '...'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ad Patterns */}
+              {results.phase1_results.ad_patterns && results.phase1_results.ad_patterns.length > 0 && (
+                <div style={{ marginBottom: '3rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Ad Patterns & Insights</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                    {results.phase1_results.ad_patterns.map((pattern: string, index: number) => (
+                      <div key={index} style={{ 
+                        backgroundColor: '#fef3c7', 
+                        padding: '1.5rem', 
+                        borderRadius: '12px', 
+                        border: '1px solid #fde68a'
+                      }}>
+                        <div style={{ fontSize: '1rem', color: '#92400e', fontWeight: '500' }}>{pattern}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Top Trends */}
+              <div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '2rem' }}>Top Trends</h3>
+                <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                  {results.trends.map((trend: any, index: number) => (
+                    <div key={index} style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between', 
+                      padding: '1.5rem', 
+                      backgroundColor: '#f9fafb', 
+                      borderRadius: '12px', 
+                      marginBottom: '1rem',
+                      transition: 'all 0.3s ease'
+                    }} onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                    }} onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f9fafb';
+                    }}>
+                      <div>
+                        <span style={{ fontWeight: '600', color: '#1f2937', fontSize: '1.125rem' }}>{trend.keyword}</span>
+                        <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                          Volume: {trend.search_volume.toLocaleString()} | Competition: {trend.competition_level}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ 
+                          backgroundColor: '#dcfce7', 
+                          color: '#166534', 
+                          padding: '0.5rem 1rem', 
+                          borderRadius: '9999px', 
+                          fontSize: '0.875rem',
+                          fontWeight: '500'
+                        }}>
+                          {trend.trend} ({trend.value})
+                        </span>
+                        <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                          {trend.opportunity_score} opportunity
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div style={{ textAlign: 'center' }}>
+          {currentStep === 'setup' && (
+            <button 
+              style={{ 
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)', 
+                color: 'white', 
+                padding: '1rem 3rem', 
+                borderRadius: '12px', 
+                border: 'none', 
+                fontSize: '1.125rem', 
+                fontWeight: '600', 
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 6px rgba(139, 92, 246, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                margin: '0 auto'
+              }} 
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 15px rgba(139, 92, 246, 0.35)';
+              }} 
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px rgba(139, 92, 246, 0.25)';
+              }}
+              onClick={handleStartAnalysis}
+              disabled={isRunning}
+            >
+              {isRunning ? (
+                <>
+                  <div style={{ 
+                    width: '24px', 
+                    height: '24px', 
+                    border: '2px solid transparent', 
+                    borderTop: '2px solid white', 
+                    borderRadius: '50%', 
+                    animation: 'spin 1s linear infinite' 
+                  }}></div>
+                  Running Analysis...
+                </>
+              ) : (
+                <>
+                  <span>▶️</span>
+                  Start Analysis
+                </>
+              )}
+            </button>
+          )}
+
+          {!isRunning && currentStep !== 'setup' && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
+              <button
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: '#374151', 
+                  padding: '0.75rem 2rem', 
+                  borderRadius: '12px', 
+                  border: '1px solid #d1d5db',
+                  fontSize: '1rem', 
+                  fontWeight: '500', 
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f9fafb';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'white';
+                }}
+                onClick={() => {
+                  setCurrentStep('setup');
+                  setCurrentPhase(null);
+                  setResults(null);
+                  setLogs([]);
+                  setAnalysisConfig(null);
+                  setError('');
+                }}
+              >
+                Run New Analysis
+              </button>
+              <button
+                style={{ 
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                  color: 'white', 
+                  padding: '0.75rem 2rem', 
+                  borderRadius: '12px', 
+                  border: 'none',
+                  fontSize: '1rem', 
+                  fontWeight: '500', 
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onClick={() => window.open('/api/download-results', '_blank')}
+              >
+                <span>📥</span>
+                Download Results
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Logs Section */}
+        {logs.length > 0 && (
+          <div style={{ marginTop: '4rem' }}>
+            <div style={{ 
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '16px', 
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+              border: '1px solid #e5e7eb'
+            }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', textAlign: 'center', marginBottom: '1.5rem' }}>Analysis Logs</h3>
+              <div style={{ 
+                backgroundColor: '#f9fafb', 
+                borderRadius: '12px', 
+                padding: '1.5rem', 
+                height: '256px', 
+                overflowY: 'auto', 
+                fontFamily: 'monospace', 
+                fontSize: '0.875rem', 
+                border: '1px solid #e5e7eb',
+                maxWidth: '800px',
+                margin: '0 auto'
+              }}>
+                {logs.map((log, index) => (
+                  <div key={index} style={{ color: '#6b7280', marginBottom: '0.5rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                    <span style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.125rem' }}>→</span>
+                    <span>{log}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+      
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 } 
